@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi, Shravan! – AI Image Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hi, Sravan from teeraj<span>✨</span></h1>
+            <p>Transform your imagination into stunning AI-generated art</p>
+        </header>
+
+        <section class="controls">
+            <div class="input-group">
+                <input type="text" id="prompt-input" placeholder="A blue tiger in a pink forest..." autocomplete="off">
+                <button id="generate-btn">
+                    <span class="btn-text">Generate</span>
+                    <span class="btn-icon">⚡</span>
+                </button>
+            </div>
+
+            <div class="options">
+                <label>
+                    <span>Aspect</span>
+                    <select id="aspect-select">
+                        <option value="1:1">Square</option>
+                        <option value="16:9">Landscape</option>
+                        <option value="9:16">Portrait</option>
+                        <option value="4:3">Classic</option>
+                        <option value="3:4">Tall</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Seed</span>
+                    <div class="seed-input-group">
+                        <input type="number" id="seed-input" placeholder="Random" min="0">
+                        <button id="randomize-btn" aria-label="Randomize seed">🎲</button>
+                    </div>
+                </label>
+            </div>
+        </section>
+
+        <main class="canvas">
+            <div class="image-wrapper" id="image-wrapper">
+                <div class="placeholder">
+                    <div class="placeholder-icon">🎨</div>
+                    <p>Your masterpiece awaits...</p>
+                </div>
+                <img id="result-image" alt="Generated image">
+                <div class="overlay">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Creating your image...</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button id="download-btn" disabled>
+                    <span>Download</span>
+                </button>
+                <button id="share-btn" disabled>
+                    <span>Share</span>
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <p>Hi Shravan, from Teeraj </p>
+        </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
