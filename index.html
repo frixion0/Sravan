@@ -3,78 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hi, Shravan! – AI Image Generator</title>
+    <title>Sravan AI – Image Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Hi, Sravan from teeraj<span>✨</span></h1>
-            <p>Transform your imagination into stunning AI-generated art</p>
-        </header>
-
-        <section class="controls">
-            <div class="input-group">
-                <input type="text" id="prompt-input" placeholder="A blue tiger in a pink forest..." autocomplete="off">
-                <button id="generate-btn">
-                    <span class="btn-text">Generate</span>
-                    <span class="btn-icon">⚡</span>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <i data-lucide="sparkles"></i>
+                <h1>Sravan AI <span>Studio</span></h1>
+            </div>
+            <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Toggle Theme">
+                    <i data-lucide="sun"></i>
                 </button>
             </div>
+        </header>
 
-            <div class="options">
-                <label>
-                    <span>Aspect</span>
-                    <select id="aspect-select">
-                        <option value="1:1">Square</option>
-                        <option value="16:9">Landscape</option>
-                        <option value="9:16">Portrait</option>
-                        <option value="4:3">Classic</option>
-                        <option value="3:4">Tall</option>
-                    </select>
-                </label>
-
-                <label>
-                    <span>Seed</span>
-                    <div class="seed-input-group">
-                        <input type="number" id="seed-input" placeholder="Random" min="0">
-                        <button id="randomize-btn" aria-label="Randomize seed">🎲</button>
+        <div class="dashboard">
+            <aside class="sidebar">
+                <section class="control-section">
+                    <h3><i data-lucide="terminal"></i> Prompt</h3>
+                    <div class="input-wrapper">
+                        <textarea id="prompt-input" placeholder="Describe what you want to create..." autocomplete="off"></textarea>
+                        <button id="surprise-btn" class="secondary-btn" title="Surprise Me">
+                            <i data-lucide="wand-2"></i>
+                        </button>
                     </div>
-                </label>
+                </section>
+
+                <section class="control-section">
+                    <h3><i data-lucide="settings-2"></i> Settings</h3>
+                    <div class="options-grid">
+                        <div class="option-item">
+                            <label for="model-select">Model</label>
+                            <select id="model-select">
+                                <option value="flux">Flux (High Quality)</option>
+                                <option value="turbo">Turbo (Fast)</option>
+                                <option value="sana">Sana</option>
+                                <option value="zimage">Z-Image</option>
+                            </select>
+                        </div>
+                        <div class="option-item">
+                            <label for="aspect-select">Aspect Ratio</label>
+                            <select id="aspect-select">
+                                <option value="1:1">Square (1:1)</option>
+                                <option value="16:9">Landscape (16:9)</option>
+                                <option value="9:16">Portrait (9:16)</option>
+                                <option value="4:3">Classic (4:3)</option>
+                                <option value="3:4">Tall (3:4)</option>
+                            </select>
+                        </div>
+                        <div class="option-item">
+                            <label for="seed-input">Seed</label>
+                            <div class="seed-group">
+                                <input type="number" id="seed-input" placeholder="Random" min="0">
+                                <button id="randomize-btn" class="icon-btn" title="Randomize">
+                                    <i data-lucide="refresh-cw"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <button id="generate-btn" class="primary-btn">
+                    <span class="btn-text">Generate Masterpiece</span>
+                    <i data-lucide="zap"></i>
+                </button>
+            </aside>
+
+            <main class="canvas-area">
+                <div class="image-container" id="image-wrapper">
+                    <div class="placeholder">
+                        <i data-lucide="image" class="placeholder-icon"></i>
+                        <p>Your imagination will appear here</p>
+                    </div>
+                    <img id="result-image" alt="Generated AI Art">
+                    <div class="loading-overlay">
+                        <div class="loader"></div>
+                        <p class="loading-text">Weaving your vision...</p>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button id="download-btn" class="action-btn" disabled>
+                        <i data-lucide="download"></i>
+                        <span>Download</span>
+                    </button>
+                    <button id="copy-btn" class="action-btn" disabled>
+                        <i data-lucide="copy"></i>
+                        <span>Copy URL</span>
+                    </button>
+                    <button id="share-btn" class="action-btn" disabled>
+                        <i data-lucide="share-2"></i>
+                        <span>Share</span>
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <section class="history-section">
+            <div class="section-header">
+                <h2><i data-lucide="history"></i> Recent Creations</h2>
+                <button id="clear-history" class="text-btn">Clear All</button>
+            </div>
+            <div id="history-grid" class="history-grid">
+                <!-- History items will be injected here -->
+                <div class="history-placeholder">
+                    <p>No creations yet. Start generating!</p>
+                </div>
             </div>
         </section>
 
-        <main class="canvas">
-            <div class="image-wrapper" id="image-wrapper">
-                <div class="placeholder">
-                    <div class="placeholder-icon">🎨</div>
-                    <p>Your masterpiece awaits...</p>
-                </div>
-                <img id="result-image" alt="Generated image">
-                <div class="overlay">
-                    <div class="spinner"></div>
-                    <p class="loading-text">Creating your image...</p>
-                </div>
-            </div>
-
-            <div class="actions">
-                <button id="download-btn" disabled>
-                    <span>Download</span>
-                </button>
-                <button id="share-btn" disabled>
-                    <span>Share</span>
-                </button>
-            </div>
-        </main>
-
-        <footer>
-            <p>Hi Sravan, from Teeraj </p>
+        <footer class="app-footer">
+            <p>Made with ✨ for Sravan from Teeraj</p>
         </footer>
     </div>
 
+    <div id="toast-container" class="toast-container"></div>
+
     <script type="module" src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        window.addEventListener('load', () => {
+            lucide.createIcons();
+        });
+    </script>
 </body>
 </html>

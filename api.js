@@ -1,24 +1,25 @@
 const BASE = 'https://image.pollinations.ai/prompt';
 
-export async function generateImage({ prompt, aspect = '1:1', seed } = {}) {
+export async function generateImage({ prompt, aspect = '1:1', seed, model = 'flux' } = {}) {
     // Validate inputs
     if (!prompt || prompt.trim().length === 0) {
         throw new Error('Prompt is required');
     }
 
-    // Clean and encode the prompt
-    const cleanPrompt = prompt.trim().replace(/[<>]/g, '');
+    // Clean prompt (remove some characters that might cause issues in path)
+    const cleanPrompt = prompt.trim().replace(/[#%/?]/g, ' ');
     const encodedPrompt = encodeURIComponent(cleanPrompt);
 
     const params = new URLSearchParams({
-        prompt: encodedPrompt,
         aspect,
         ...(seed !== undefined && { seed }),
+        model,
         nologo: 'true',
     });
 
-    const url = `${BASE}/${encodedPrompt}?${params.toString()}`;
-    return url;
+    // Pollinations AI can take prompt in path or as a query param.
+    // Using it in the path is cleaner, but we should not double-encode in query.
+    return `${BASE}/${encodedPrompt}?${params.toString()}`;
 }
 
 export async function urlToDataUrl(url) {
