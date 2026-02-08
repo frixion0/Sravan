@@ -16,10 +16,12 @@ const imageWrapper = $('#image-wrapper');
 const resultImage = $('#result-image');
 const downloadBtn = $('#download-btn');
 const copyBtn = $('#copy-btn');
+const mainCopyPromptBtn = $('#copy-prompt-btn');
 const shareBtn = $('#share-btn');
 const themeToggle = $('#theme-toggle');
 const historyGrid = $('#history-grid');
 const clearHistoryBtn = $('#clear-history');
+const historySearch = $('#history-search');
 
 let lastBlob = null;
 let lastUrl = null;
@@ -81,7 +83,7 @@ const handleSurprise = () => {
 const saveToHistory = (item) => {
     history = [item, ...history].slice(0, 20);
     localStorage.setItem('sravan_ai_history', JSON.stringify(history));
-    renderHistory();
+    renderHistory(historySearch.value);
 };
 
 const escapeHTML = (str) => {
@@ -90,28 +92,60 @@ const escapeHTML = (str) => {
     return div.innerHTML;
 };
 
-const renderHistory = () => {
+const renderHistory = (filter = '') => {
     if (!historyGrid) return;
 
-    if (history.length === 0) {
-        historyGrid.innerHTML = '<div class="history-placeholder"><p>No creations yet. Start generating!</p></div>';
+    const filteredHistory = history.filter(item =>
+        item.prompt.toLowerCase().includes(filter.toLowerCase())
+    );
+
+    // Update count if title exists
+    const historyTitle = $('.history-section h2');
+    if (historyTitle) {
+        historyTitle.innerHTML = `<i data-lucide="history"></i> Recent Creations ${history.length ? `(${history.length})` : ''}`;
+    }
+
+    if (filteredHistory.length === 0) {
+        historyGrid.innerHTML = `<div class="history-placeholder"><p>${filter ? 'No results found.' : 'No creations yet. Start generating!'}</p></div>`;
         return;
     }
 
-    historyGrid.innerHTML = history.map((item, index) => {
+    historyGrid.innerHTML = filteredHistory.map((item, index) => {
         const safePrompt = escapeHTML(item.prompt);
+        const originalIndex = history.indexOf(item);
         return `
-            <div class="history-item" data-index="${index}" title="${safePrompt}">
+            <div class="history-item" data-index="${originalIndex}" title="${safePrompt}">
                 <img src="${item.url}" alt="${safePrompt}" loading="lazy">
+                <div class="history-item-overlay">
+                    <button class="copy-prompt-btn" title="Copy Prompt" data-prompt="${safePrompt}">
+                        <i data-lucide="copy"></i>
+                    </button>
+                </div>
             </div>
         `;
     }).join('');
 
+    if (window.lucide) lucide.createIcons();
+
     $$('.history-item').forEach(item => {
-        item.addEventListener('click', () => {
+        item.addEventListener('click', (e) => {
+            if (e.target.closest('.copy-prompt-btn')) return;
             const index = item.getAttribute('data-index');
             const data = history[index];
             loadFromHistory(data);
+        });
+    });
+
+    $$('.copy-prompt-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const text = btn.getAttribute('data-prompt');
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Prompt copied!');
+            } catch (err) {
+                showToast('Failed to copy prompt', 'error');
+            }
         });
     });
 };
@@ -133,6 +167,7 @@ const loadFromHistory = async (data) => {
         lastBlob = await response.blob();
         downloadBtn.disabled = false;
         copyBtn.disabled = false;
+        mainCopyPromptBtn.disabled = false;
         shareBtn.disabled = false;
     } catch (e) {
         console.error('Failed to reload blob', e);
@@ -175,6 +210,7 @@ const handleGenerate = async () => {
         
         downloadBtn.disabled = false;
         copyBtn.disabled = false;
+        mainCopyPromptBtn.disabled = false;
         shareBtn.disabled = false;
 
         saveToHistory({ url, prompt, aspect, model, seed, timestamp: Date.now() });
@@ -207,6 +243,9 @@ generateBtn.addEventListener('click', handleGenerate);
 surpriseBtn.addEventListener('click', handleSurprise);
 randomizeBtn.addEventListener('click', randomizeSeed);
 themeToggle.addEventListener('click', toggleTheme);
+historySearch.addEventListener('input', (e) => {
+    renderHistory(e.target.value);
+});
 clearHistoryBtn.addEventListener('click', () => {
     if (confirm('Clear all your history?')) {
         history = [];
@@ -233,9 +272,20 @@ copyBtn.addEventListener('click', async () => {
     if (!lastUrl) return;
     try {
         await navigator.clipboard.writeText(lastUrl);
-        showToast('URL copied to clipboard!');
+        showToast('URL copied!');
     } catch (err) {
         showToast('Failed to copy URL.', 'error');
+    }
+});
+
+mainCopyPromptBtn.addEventListener('click', async () => {
+    const prompt = promptInput.value.trim();
+    if (!prompt) return;
+    try {
+        await navigator.clipboard.writeText(prompt);
+        showToast('Prompt copied!');
+    } catch (err) {
+        showToast('Failed to copy prompt.', 'error');
     }
 });
 

@@ -1,33 +1,35 @@
 export function downloadImage(blob, filename) {
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(blob);
+    a.href = url;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(a.href);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
 }
 
 export async function shareImage(blob) {
-    const file = new File([blob], `shravan-ai-${Date.now()}.png`, { type: 'image/png' });
+    const filename = `sravan-ai-${Date.now()}.png`;
+    const file = new File([blob], filename, { type: 'image/png' });
     
-    // Check if Web Share API is available
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    // Check if Web Share API is available for files
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
         try {
             await navigator.share({
-                title: 'Hi, Shravan! – AI Generated Art',
-                text: 'Check out this amazing AI-generated image!',
+                title: 'Sravan AI Studio Creation',
+                text: 'Check out this AI-generated masterpiece!',
                 files: [file],
             });
+            return true;
         } catch (err) {
             if (err.name !== 'AbortError') {
                 console.error('Share failed:', err);
-                // Fallback to download
-                downloadImage(blob, `shravan-ai-${Date.now()}.png`);
             }
         }
-    } else {
-        // Fallback to download
-        downloadImage(blob, `shravan-ai-${Date.now()}.png`);
     }
+
+    // Fallback: Just download if share is not supported or failed
+    downloadImage(blob, filename);
+    return false;
 }

@@ -94,9 +94,13 @@
                         <i data-lucide="download"></i>
                         <span>Download</span>
                     </button>
-                    <button id="copy-btn" class="action-btn" disabled>
-                        <i data-lucide="copy"></i>
+                    <button id="copy-btn" class="action-btn" disabled title="Copy Image URL">
+                        <i data-lucide="link"></i>
                         <span>Copy URL</span>
+                    </button>
+                    <button id="copy-prompt-btn" class="action-btn" disabled title="Copy Prompt">
+                        <i data-lucide="copy"></i>
+                        <span>Prompt</span>
                     </button>
                     <button id="share-btn" class="action-btn" disabled>
                         <i data-lucide="share-2"></i>
@@ -108,7 +112,13 @@
 
         <section class="history-section">
             <div class="section-header">
-                <h2><i data-lucide="history"></i> Recent Creations</h2>
+                <div class="header-title">
+                    <h2><i data-lucide="history"></i> Recent Creations</h2>
+                    <div class="search-wrapper">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="history-search" placeholder="Search prompts...">
+                    </div>
+                </div>
                 <button id="clear-history" class="text-btn">Clear All</button>
             </div>
             <div id="history-grid" class="history-grid">
